@@ -40,7 +40,7 @@ public class MedicationPrescription extends JFrame {
 
     private void createUIComponents() {
         try {
-            BufferedImage myPicture = ImageIO.read(this.getClass().getResource("ninja-dp.png"));
+            BufferedImage myPicture = ImageIO.read(this.getClass().getResource("ninja-resized.png"));
             displaypiclabel = new JLabel(new ImageIcon(myPicture));
         } catch (IOException e) {
             e.printStackTrace();
