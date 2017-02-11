@@ -153,7 +153,7 @@ public class DatabaseManager {
         DatabaseManager dbManager = new DatabaseManager();
 //        dbManager.updateProfile("John Doe", "Ramipiril", "5060124640457");
         System.out.println(dbManager.returnMedicationId("John Doe"));
-
+        MedicationPrescription myForm = new MedicationPrescription();
     }
 
 }
