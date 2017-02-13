@@ -1,24 +1,22 @@
-import jdk.nashorn.internal.scripts.JO;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by sara on 11/02/17.
  */
 public class Dashboard extends JFrame {
     private JPanel dashboard;
-    private JLabel displaypiclabel;
+    private JLabel displayPicLabel;
     private JTable table1;
-    private JButton updateProfileButton;
+    private JButton updatePrescriptionsButton;
     private JButton checkCompatibilityButton;
     private JButton checkOverTheCounterButton;
     private JButton updateButton;
@@ -28,6 +26,15 @@ public class Dashboard extends JFrame {
         super("Dashboard");
         this.rs = rs;
         $$$setupUI$$$();
+        /* Add icons to buttons */
+        updatePrescriptionsButton.setIcon(new ImageIcon(Dashboard.class.getResource("icon/medicine-stethoscope-icon.png")));
+        checkCompatibilityButton.setIcon(new ImageIcon(Dashboard.class.getResource("icon/life_star-512.png")));
+        /* Remove borders around buttons */
+        updatePrescriptionsButton.setBorderPainted(false);
+        checkCompatibilityButton.setBorderPainted(false);
+        /* Change cursor on hover for buttons */
+        updatePrescriptionsButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        checkCompatibilityButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         setContentPane(dashboard);
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,6 +43,7 @@ public class Dashboard extends JFrame {
         updateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // TODO: Bring up the right form
                 JOptionPane.showConfirmDialog(Dashboard.this, "You clicked this");
             }
         });
@@ -51,10 +59,44 @@ public class Dashboard extends JFrame {
 
     private void createUIComponents() {
         try {
-            BufferedImage myPicture = ImageIO.read(this.getClass().getResource("ninja-resized.png"));
-            displaypiclabel = new JLabel(new ImageIcon(myPicture));
+            BufferedImage myPicture = ImageIO.read(this.getClass().getResource("icon/ninja-resized.png"));
+            displayPicLabel = new JLabel(new ImageIcon(myPicture));
+            String col[] = {"Name", "Barcode", "Strength", "Daily Prescription", "Manufacturer"};
 
-//            table1 = new JTable(buildTableModel());
+            final DefaultTableModel tableModel = new DefaultTableModel(col, 0);
+            table1 = new JTable(tableModel) {
+                public boolean editCellAt(int row, int column, EventObject e) {
+                    return false;
+                }
+            };
+            table1.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+            table1.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        JTable target = (JTable) e.getSource();
+                        int row = target.getSelectedRow();
+                        int dialogResult = JOptionPane.showConfirmDialog(Dashboard.this, "Are you sure you want to delete this?");
+                        if (dialogResult == JOptionPane.YES_OPTION) {
+                            DatabaseManager dbManager = new DatabaseManager();
+                            dbManager.delete(rs, row);
+                            tableModel.removeRow(row);
+                        }
+                    }
+                }
+            });
+
+            for (int i = 0; i < rs.size(); i++) {
+                String med_name = rs.get(i).get("med_name");
+                String barcode = rs.get(i).get("barcode");
+                String strength = rs.get(i).get("dosage");
+                String quantity = rs.get(i).get("quantity");
+                String manufacturer = rs.get(i).get("pharma_company");
+
+                Object[] data = {med_name, barcode, strength, quantity, manufacturer};
+
+                tableModel.addRow(data);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,7 +112,7 @@ public class Dashboard extends JFrame {
     private void $$$setupUI$$$() {
         createUIComponents();
         dashboard = new JPanel();
-        dashboard.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(1, 1, new Insets(10, 10, 10, 10), -1, -1));
+        dashboard.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(1, 1, new Insets(20, 20, 20, 20), -1, -1));
         final JSplitPane splitPane1 = new JSplitPane();
         dashboard.add(splitPane1, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
         final JPanel panel1 = new JPanel();
@@ -78,50 +120,64 @@ public class Dashboard extends JFrame {
         splitPane1.setRightComponent(panel1);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(4, 1, new Insets(0, 0, 0, 0), -1, -1));
-        panel1.add(panel2, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        displaypiclabel.setText("");
-        panel2.add(displaypiclabel, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(panel2, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(557, 89), null, 0, false));
+        displayPicLabel.setText("");
+        panel2.add(displayPicLabel, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final com.intellij.uiDesigner.core.Spacer spacer1 = new com.intellij.uiDesigner.core.Spacer();
         panel2.add(spacer1, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final com.intellij.uiDesigner.core.Spacer spacer2 = new com.intellij.uiDesigner.core.Spacer();
         panel2.add(spacer2, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
+        label1.setFont(new Font("Impact", label1.getFont().getStyle(), 36));
+        label1.setForeground(new Color(-9567737));
         label1.setText("DASHBOARD");
         panel2.add(label1, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
         final JLabel label2 = new JLabel();
-        label2.setText("Medication Profile");
-        panel1.add(label2, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        label2.setHorizontalAlignment(0);
+        label2.setText("Code Ninja's Medication Profile");
+        panel1.add(label2, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(557, 18), null, 0, false));
         final com.intellij.uiDesigner.core.Spacer spacer3 = new com.intellij.uiDesigner.core.Spacer();
-        panel1.add(spacer3, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panel1.add(spacer3, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(557, 14), null, 0, false));
+        checkOverTheCounterButton = new JButton();
+        checkOverTheCounterButton.setText("Check Over-The-Counter Medication for Possible Interactions");
+        checkOverTheCounterButton.setToolTipText("Check for any possible Drug-Drug Interactions between your prescription drugs and Over-The-Counter medication.");
+        panel1.add(checkOverTheCounterButton, new com.intellij.uiDesigner.core.GridConstraints(6, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(557, 34), null, 0, false));
+        updateButton = new JButton();
+        updateButton.setText("Update Medical Profile");
+        updateButton.setToolTipText("Make changes to your medical profile.");
+        panel1.add(updateButton, new com.intellij.uiDesigner.core.GridConstraints(4, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(557, 34), null, 0, false));
+        final com.intellij.uiDesigner.core.Spacer spacer4 = new com.intellij.uiDesigner.core.Spacer();
+        panel1.add(spacer4, new com.intellij.uiDesigner.core.GridConstraints(5, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(557, 14), null, 0, false));
+        final JScrollPane scrollPane1 = new JScrollPane();
+        scrollPane1.setToolTipText("Your current prescriptions. Double-click on table entry to delete from profile.");
+        panel1.add(scrollPane1, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(600, 200), null, 1, false));
         table1.setAutoCreateRowSorter(true);
         table1.setIntercellSpacing(new Dimension(5, 5));
         table1.setRowHeight(20);
-        panel1.add(table1, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
-        checkOverTheCounterButton = new JButton();
-        checkOverTheCounterButton.setText("Check Over the Counter Medication for Possible Interactions");
-        panel1.add(checkOverTheCounterButton, new com.intellij.uiDesigner.core.GridConstraints(6, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        updateButton = new JButton();
-        updateButton.setText("Update");
-        panel1.add(updateButton, new com.intellij.uiDesigner.core.GridConstraints(4, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final com.intellij.uiDesigner.core.Spacer spacer4 = new com.intellij.uiDesigner.core.Spacer();
-        panel1.add(spacer4, new com.intellij.uiDesigner.core.GridConstraints(5, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        scrollPane1.setViewportView(table1);
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(4, 1, new Insets(0, 0, 0, 0), -1, -1));
-        panel3.setBackground(new Color(-579787));
+        panel3.setBackground(new Color(-562358));
         splitPane1.setLeftComponent(panel3);
-        updateProfileButton = new JButton();
-        updateProfileButton.setBackground(new Color(-562358));
-        updateProfileButton.setContentAreaFilled(false);
-        updateProfileButton.setText("Update Profile");
-        panel3.add(updateProfileButton, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(98, 34), null, 0, false));
+        updatePrescriptionsButton = new JButton();
+        updatePrescriptionsButton.setBackground(new Color(-9567737));
+        updatePrescriptionsButton.setContentAreaFilled(false);
+        updatePrescriptionsButton.setForeground(new Color(-1));
+        updatePrescriptionsButton.setText("Update Prescriptions");
+        updatePrescriptionsButton.setToolTipText("Keep your profile up-to-date. Make changes to your current prescriptions by clicking here.");
+        panel3.add(updatePrescriptionsButton, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(98, 34), null, 0, false));
         checkCompatibilityButton = new JButton();
-        checkCompatibilityButton.setBackground(new Color(-562358));
+        checkCompatibilityButton.setBackground(new Color(-2220773));
         checkCompatibilityButton.setContentAreaFilled(false);
+        checkCompatibilityButton.setForeground(new Color(-1));
         checkCompatibilityButton.setText("Check Compatibility");
+        checkCompatibilityButton.setToolTipText("Check for any possible Drug-Drug Interactions between your prescription drugs and Over-The-Counter medication by entering its details here.");
         panel3.add(checkCompatibilityButton, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final com.intellij.uiDesigner.core.Spacer spacer5 = new com.intellij.uiDesigner.core.Spacer();
-        panel3.add(spacer5, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panel3.add(spacer5, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JLabel label3 = new JLabel();
+        label3.setFont(new Font("Purisa", label3.getFont().getStyle(), 18));
+        label3.setForeground(new Color(-3597799));
         label3.setText("Shortcuts");
         panel3.add(label3, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
@@ -133,7 +189,7 @@ public class Dashboard extends JFrame {
         return dashboard;
     }
 
-//    private DefaultTableModel buildTableModel() {
+    //    private DefaultTableModel buildTableModel() {
 //        try {
 //            ResultSetMetaData metaData = this.rs.getMetaData();
 //

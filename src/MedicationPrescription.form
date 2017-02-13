@@ -5,34 +5,11 @@
     <constraints>
       <xy x="12" y="24" width="375" height="434"/>
     </constraints>
-    <properties/>
+    <properties>
+      <preferredSize width="359" height="500"/>
+    </properties>
     <border type="none"/>
     <children>
-      <component id="faee8" class="javax.swing.JButton" binding="enterDetailsManuallyButton" default-binding="true">
-        <constraints>
-          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Enter Details Manually"/>
-        </properties>
-      </component>
-      <component id="3e5eb" class="javax.swing.JButton" binding="enterBarcodeValuesButton" default-binding="true">
-        <constraints>
-          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <margin top="2" left="14" bottom="2" right="14"/>
-          <text value="Enter Barcode Values"/>
-        </properties>
-      </component>
-      <vspacer id="f862c">
-        <constraints>
-          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
-            <preferred-size width="10" height="10"/>
-            <maximum-size width="10" height="10"/>
-          </grid>
-        </constraints>
-      </vspacer>
       <component id="a6c21" class="javax.swing.JLabel">
         <constraints>
           <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
@@ -53,7 +30,7 @@
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Code Ninja's Profile"/>
+          <text value="Code Ninja"/>
         </properties>
       </component>
       <vspacer id="fe5f5">
@@ -76,7 +53,7 @@
       </vspacer>
       <vspacer id="fa56d">
         <constraints>
-          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <vspacer id="fd38c">
@@ -84,6 +61,37 @@
           <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
+      <component id="faee8" class="javax.swing.JButton" binding="enterDetailsManuallyButton" default-binding="true">
+        <constraints>
+          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Enter Details Manually"/>
+          <toolTipText value="Provide all the information on your prescriptions manually."/>
+        </properties>
+      </component>
+      <component id="9d735" class="javax.swing.JTextField" binding="enterBarcodeValueHereTextField" default-binding="true">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <horizontalAlignment value="0"/>
+          <margin top="5" left="5" bottom="5" right="5"/>
+          <text value="Enter barcode value here"/>
+        </properties>
+      </component>
+      <component id="3e5eb" class="javax.swing.JButton" binding="enterBarcodeValuesButton" default-binding="true">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <margin top="2" left="14" bottom="2" right="14"/>
+          <text value="Submit Barcode Value"/>
+          <toolTipText value="13 digits. Key in the barcode value of your prescription to automatically fill up information."/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>

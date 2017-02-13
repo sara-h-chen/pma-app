@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Class-Path: dnsns.jar jfxrt.jar sunec.jar zipfs.jar jaccess.jar nashor
+ n.jar cldrdata.jar sunpkcs11.jar localedata.jar sunjce_provider.jar s
+ qlite-jdbc-3.16.1.jar
+Main-Class: DatabaseManager
+

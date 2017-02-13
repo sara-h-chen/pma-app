@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Dashboard">
   <grid id="27dc6" binding="dashboard" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-    <margin top="10" left="10" bottom="10" right="10"/>
+    <margin top="20" left="20" bottom="20" right="20"/>
     <constraints>
-      <xy x="20" y="20" width="651" height="455"/>
+      <xy x="20" y="20" width="813" height="746"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -28,12 +28,14 @@
               <grid id="a5052" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                    <preferred-size width="557" height="89"/>
+                  </grid>
                 </constraints>
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="6974c" class="javax.swing.JLabel" binding="displaypiclabel" custom-create="true">
+                  <component id="6974c" class="javax.swing.JLabel" binding="displayPicLabel" custom-create="true">
                     <constraints>
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -56,6 +58,8 @@
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="1" use-parent-layout="false"/>
                     </constraints>
                     <properties>
+                      <font name="Impact" size="36"/>
+                      <foreground color="-9567737"/>
                       <text value="DASHBOARD"/>
                     </properties>
                   </component>
@@ -63,50 +67,72 @@
               </grid>
               <component id="489dc" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="557" height="18"/>
+                  </grid>
                 </constraints>
                 <properties>
-                  <text value="Medication Profile"/>
+                  <horizontalAlignment value="0"/>
+                  <text value="Code Ninja's Medication Profile"/>
                 </properties>
               </component>
               <vspacer id="66354">
                 <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                    <preferred-size width="557" height="14"/>
+                  </grid>
                 </constraints>
               </vspacer>
-              <component id="2c84f" class="javax.swing.JTable" binding="table1" custom-create="true" default-binding="true">
+              <component id="8e407" class="javax.swing.JButton" binding="checkOverTheCounterButton" default-binding="true">
                 <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="50"/>
+                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="557" height="34"/>
                   </grid>
                 </constraints>
                 <properties>
-                  <autoCreateRowSorter value="true"/>
-                  <intercellSpacing width="5" height="5"/>
-                  <rowHeight value="20"/>
-                </properties>
-              </component>
-              <component id="8e407" class="javax.swing.JButton" binding="checkOverTheCounterButton" default-binding="true">
-                <constraints>
-                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Check Over the Counter Medication for Possible Interactions"/>
+                  <text value="Check Over-The-Counter Medication for Possible Interactions"/>
+                  <toolTipText value="Check for any possible Drug-Drug Interactions between your prescription drugs and Over-The-Counter medication."/>
                 </properties>
               </component>
               <component id="6cddd" class="javax.swing.JButton" binding="updateButton" default-binding="true">
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="557" height="34"/>
+                  </grid>
                 </constraints>
                 <properties>
-                  <text value="Update"/>
+                  <text value="Update Medical Profile"/>
+                  <toolTipText value="Make changes to your medical profile."/>
                 </properties>
               </component>
               <vspacer id="d85bf">
                 <constraints>
-                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                    <preferred-size width="557" height="14"/>
+                  </grid>
                 </constraints>
               </vspacer>
+              <scrollpane id="7c180">
+                <constraints>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="7" anchor="0" fill="3" indent="1" use-parent-layout="false">
+                    <preferred-size width="600" height="200"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <toolTipText value="Your current prescriptions. Double-click on table entry to delete from profile."/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="2c84f" class="javax.swing.JTable" binding="table1" custom-create="true" default-binding="true">
+                    <constraints/>
+                    <properties>
+                      <autoCreateRowSorter value="true"/>
+                      <intercellSpacing width="5" height="5"/>
+                      <rowHeight value="20"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
             </children>
           </grid>
           <grid id="f0744" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -115,20 +141,22 @@
               <splitpane position="left"/>
             </constraints>
             <properties>
-              <background color="-579787"/>
+              <background color="-562358"/>
             </properties>
             <border type="none"/>
             <children>
-              <component id="20c3a" class="javax.swing.JButton" binding="updateProfileButton" default-binding="true">
+              <component id="20c3a" class="javax.swing.JButton" binding="updatePrescriptionsButton" default-binding="true">
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="98" height="34"/>
                   </grid>
                 </constraints>
                 <properties>
-                  <background color="-562358"/>
+                  <background color="-9567737"/>
                   <contentAreaFilled value="false"/>
-                  <text value="Update Profile"/>
+                  <foreground color="-1"/>
+                  <text value="Update Prescriptions"/>
+                  <toolTipText value="Keep your profile up-to-date. Make changes to your current prescriptions by clicking here."/>
                 </properties>
               </component>
               <component id="cacc1" class="javax.swing.JButton" binding="checkCompatibilityButton" default-binding="true">
@@ -136,14 +164,16 @@
                   <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <background color="-562358"/>
+                  <background color="-2220773"/>
                   <contentAreaFilled value="false"/>
+                  <foreground color="-1"/>
                   <text value="Check Compatibility"/>
+                  <toolTipText value="Check for any possible Drug-Drug Interactions between your prescription drugs and Over-The-Counter medication by entering its details here."/>
                 </properties>
               </component>
               <vspacer id="5b03">
                 <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
               </vspacer>
               <component id="9d34d" class="javax.swing.JLabel">
@@ -151,6 +181,8 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
+                  <font name="Purisa" size="18"/>
+                  <foreground color="-3597799"/>
                   <text value="Shortcuts"/>
                 </properties>
               </component>

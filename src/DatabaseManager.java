@@ -1,8 +1,4 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -154,6 +150,8 @@ public class DatabaseManager {
             ArrayList<Map<String, String>> arrayOfMeds = new ArrayList<Map<String, String>>();
             while (resultSet.next()) {
                 HashMap<String, String> hash = new HashMap<String, String>();
+                String med_id = Integer.toString(resultSet.getInt("id"));
+                hash.put("id", med_id);
                 String pharma_company = resultSet.getString("pharma_company");
                 hash.put("pharma_company", pharma_company);
                 String med_name = resultSet.getString("med_name");
@@ -174,6 +172,28 @@ public class DatabaseManager {
             System.exit(0);
         }
         return null;
+    }
+
+    /**
+     * Deletes from the user's medication profile
+     * @param rs
+     * @param row
+     */
+    public void delete(ArrayList<Map<String, String>> rs, int row) {
+        Map<String, String> selectedRow = rs.get(row);
+        try {
+            openDatabase();
+
+            prep_stmt = connection.prepareStatement("DELETE FROM user_medication WHERE medication_id=(?)");
+            prep_stmt.setInt(1, Integer.valueOf(selectedRow.get("id")));
+            prep_stmt.executeUpdate();
+            connection.commit();
+
+            connection.close();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
     }
 
     /*
@@ -198,7 +218,11 @@ public class DatabaseManager {
     public static void main(String[] args) {
         DatabaseManager dbManager = new DatabaseManager();
 //        dbManager.userMedication("John Doe");
-        Dashboard myForm = new Dashboard(dbManager.userMedication("John Doe"));
+//        MedicationPrescription myForm = new MedicationPrescription();
+//        Dashboard myForm2 = new Dashboard(dbManager.userMedication("John Doe"));
+//        OverCounterForm medForm = new OverCounterForm();
+        Warning warning = new Warning();
+        Safe safe = new Safe();
+        Danger danger = new Danger();
     }
-
 }
