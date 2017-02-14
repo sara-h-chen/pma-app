@@ -36,9 +36,6 @@ public class Danger extends JDialog {
 
     public static void main(String[] args) {
         Danger dialog = new Danger();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
     }
 
     private void createUIComponents() {

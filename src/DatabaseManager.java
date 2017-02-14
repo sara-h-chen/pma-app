@@ -28,6 +28,31 @@ public class DatabaseManager {
         System.out.println("Database opened successfully");
     }
 
+    //////////////////////////////////////////////////////////////////////////////////
+    //        MEDICATION: FUNCTIONALITY TO GET INFORMATION FROM MEDICATION DB       //
+    //////////////////////////////////////////////////////////////////////////////////
+
+    public void addMedication(String pharma_company, String med_name, Double strength, String barcode, int tablets) {
+        openDatabase();
+        try {
+            prep_stmt = connection.prepareStatement("INSERT INTO medication(pharma_company, med_name, strength, barcode, tablets) VALUES (?,?,?,?,?)");
+            prep_stmt.setString(1, pharma_company);
+            prep_stmt.setString(2, med_name);
+            prep_stmt.setDouble(3, strength);
+            prep_stmt.setString(4, barcode);
+            prep_stmt.setInt(5, tablets);
+            prep_stmt.executeUpdate();
+            connection.commit();
+            connection.close();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //       USER PROFILE: FUNCTIONALITY TO UPDATE USER-RELATED INFORMATION         //
+    //////////////////////////////////////////////////////////////////////////////////
     /**
      * Edit Profile Name
      * @param current_user_name
@@ -88,45 +113,26 @@ public class DatabaseManager {
         }
     }
 
-    public Medicine returnMedObject(String user_name) {
-        try {
-            openDatabase();
-
-
-        } catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
-        }
-        return null;
-    }
-
     /**
-     * Gets all the user's prescribed medication IDs
-     * @param user_name
-     * @return
+     * Deletes from the user's medication profile
+     * @param rs
+     * @param row
      */
-    public ArrayList<Integer> returnMedicationId(String user_name) {
+    public void delete(ArrayList<Map<String, String>> rs, int row) {
+        Map<String, String> selectedRow = rs.get(row);
         try {
             openDatabase();
 
-            /* GET ALL MEDICATION */
-            prep_stmt = connection.prepareStatement("SELECT * FROM user_medication LEFT JOIN user_profile AS userdb ON user_medication.user_id=userdb.id WHERE userdb.name=(?)");
-            prep_stmt.setString(1, user_name);
-            resultSet = prep_stmt.executeQuery();
-            ArrayList<Integer> medicationList = new ArrayList<Integer>();
-            while (resultSet.next()) {
-                int medication = resultSet.getInt("medication_id");
-                medicationList.add(medication);
-            }
+            prep_stmt = connection.prepareStatement("DELETE FROM user_medication WHERE medication_id=(?)");
+            prep_stmt.setInt(1, Integer.valueOf(selectedRow.get("id")));
+            prep_stmt.executeUpdate();
+            connection.commit();
 
             connection.close();
-
-            return medicationList;
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
-        return null;
     }
 
     /**
@@ -175,25 +181,32 @@ public class DatabaseManager {
     }
 
     /**
-     * Deletes from the user's medication profile
-     * @param rs
-     * @param row
+     * Gets all the user's prescribed medication IDs
+     * @param user_name
+     * @return
      */
-    public void delete(ArrayList<Map<String, String>> rs, int row) {
-        Map<String, String> selectedRow = rs.get(row);
+    public ArrayList<Integer> returnMedicationId(String user_name) {
         try {
             openDatabase();
 
-            prep_stmt = connection.prepareStatement("DELETE FROM user_medication WHERE medication_id=(?)");
-            prep_stmt.setInt(1, Integer.valueOf(selectedRow.get("id")));
-            prep_stmt.executeUpdate();
-            connection.commit();
+            /* GET ALL MEDICATION */
+            prep_stmt = connection.prepareStatement("SELECT * FROM user_medication LEFT JOIN user_profile AS userdb ON user_medication.user_id=userdb.id WHERE userdb.name=(?)");
+            prep_stmt.setString(1, user_name);
+            resultSet = prep_stmt.executeQuery();
+            ArrayList<Integer> medicationList = new ArrayList<Integer>();
+            while (resultSet.next()) {
+                int medication = resultSet.getInt("medication_id");
+                medicationList.add(medication);
+            }
 
             connection.close();
+
+            return medicationList;
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
+        return null;
     }
 
     /*
@@ -217,12 +230,11 @@ public class DatabaseManager {
 
     public static void main(String[] args) {
         DatabaseManager dbManager = new DatabaseManager();
-//        dbManager.userMedication("John Doe");
 //        MedicationPrescription myForm = new MedicationPrescription();
-//        Dashboard myForm2 = new Dashboard(dbManager.userMedication("John Doe"));
+        Dashboard myForm2 = new Dashboard(dbManager.userMedication("John Doe"));
 //        OverCounterForm medForm = new OverCounterForm();
-        Warning warning = new Warning();
-        Safe safe = new Safe();
-        Danger danger = new Danger();
+//        Warning warning = new Warning();
+//        Safe safe = new Safe();
+//        Danger danger = new Danger();
     }
 }
