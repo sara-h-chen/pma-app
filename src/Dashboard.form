@@ -63,7 +63,7 @@
                     </constraints>
                     <properties>
                       <font name="Impact" size="36"/>
-                      <foreground color="-9567737"/>
+                      <foreground color="-3597799"/>
                       <text value="DASHBOARD"/>
                     </properties>
                   </component>

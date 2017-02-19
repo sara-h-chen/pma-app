@@ -5,17 +5,21 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.EventObject;
-import java.util.Map;
+import java.util.Vector;
 
 /**
  * Created by sara on 11/02/17.
  */
 public class Dashboard extends JFrame {
+
     private JPanel dashboard;
     private JLabel displayPicLabel;
     private JTable table1;
+    private DefaultTableModel tableModel;
     private JButton updatePrescriptionsButton;
     private JButton checkCompatibilityButton;
     private JButton checkOverTheCounterButton;
@@ -23,21 +27,22 @@ public class Dashboard extends JFrame {
     private JButton shortcutsButton;
     private JPanel shortcutsPanel;
     private JSplitPane dashboardPane;
-    private ArrayList<Map<String, String>> rs;
+    private DatabaseManager dbManager;
+//    final private MedicationPrescription medForm;
 
-    public Dashboard(ArrayList<Map<String, String>> rs) {
+    public Dashboard() {
         super("Dashboard");
-        this.rs = rs;
+        this.dbManager = new DatabaseManager();
         $$$setupUI$$$();
-        /* Add icons to buttons */
+        /* ADD ICONS TO BUTTONS */
         updatePrescriptionsButton.setIcon(new ImageIcon(Dashboard.class.getResource("icon/medicine-stethoscope-icon.png")));
         checkCompatibilityButton.setIcon(new ImageIcon(Dashboard.class.getResource("icon/life_star-512.png")));
         shortcutsButton.setIcon(new ImageIcon(Dashboard.class.getResource("icon/hamburger.png")));
-        /* Remove borders around buttons */
+        /* REMOVE BORDERS AROUND BUTTONS */
         updatePrescriptionsButton.setBorderPainted(false);
         checkCompatibilityButton.setBorderPainted(false);
         shortcutsButton.setBorderPainted(false);
-        /* Change cursor on hover for buttons */
+        /* CHANGE CURSOR ON HOVER FOR BUTTONS */
         updatePrescriptionsButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         checkCompatibilityButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         shortcutsButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -53,7 +58,6 @@ public class Dashboard extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!shortcutsPanel.isVisible()) {
-//                    JOptionPane.showConfirmDialog(Dashboard.this, "Not visible");
                     dashboardPane.setDividerLocation(0.28);
                     shortcutsPanel.setVisible(true);
                 } else {
@@ -65,10 +69,7 @@ public class Dashboard extends JFrame {
         updateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO: Bring up the right form
-                MedicationPrescription med = new MedicationPrescription();
-//                JOptionPane.showConfirmDialog(Dashboard.this, "You clicked this");
-                SwingUtilities.updateComponentTreeUI(dashboard);
+                addToDatabase();
             }
         });
 
@@ -79,6 +80,30 @@ public class Dashboard extends JFrame {
             }
         });
 
+        updatePrescriptionsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addToDatabase();
+            }
+        });
+
+    }
+
+    private void addToDatabase() {
+        final MedicationPrescription medForm = new MedicationPrescription(dbManager);
+        medForm.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+                String[] values = medForm.getValues();
+                if (values != null && medForm.isUpdated()) {
+                    dbManager.addMedication(values[2], values[0], Double.parseDouble(values[3]), values[1], Integer.parseInt(values[4]));
+                    tableModel.addRow(new Object[]{values[2], values[0], values[3], values[1], values[4]});
+                    JOptionPane.showMessageDialog(Dashboard.this, "Prescription added to profile", "Update Successful", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    return;
+                }
+            }
+        });
     }
 
     private void createUIComponents() {
@@ -86,10 +111,8 @@ public class Dashboard extends JFrame {
             BufferedImage myPicture = ImageIO.read(this.getClass().getResource("icon/ninja-resized.png"));
             displayPicLabel = new JLabel(new ImageIcon(myPicture));
 
-            /* Create table */
-            String col[] = {"Name", "Barcode", "Strength", "Daily Prescription", "Manufacturer"};
 
-            final DefaultTableModel tableModel = new DefaultTableModel(col, 0);
+            tableModel = buildTableModel();
             table1 = new JTable(tableModel) {
                 public boolean editCellAt(int row, int column, EventObject e) {
                     return false;
@@ -105,29 +128,53 @@ public class Dashboard extends JFrame {
                         int row = target.getSelectedRow();
                         int dialogResult = JOptionPane.showConfirmDialog(Dashboard.this, "Are you sure you want to delete this?");
                         if (dialogResult == JOptionPane.YES_OPTION) {
-                            DatabaseManager dbManager = new DatabaseManager();
-                            dbManager.delete(rs, row);
+                            String medToDelete = target.getValueAt(row, 1).toString();
+                            dbManager.delete(medToDelete);
                             tableModel.removeRow(row);
                         }
                     }
                 }
             });
-
-            /* Draw information from object returned by database */
-            for (int i = 0; i < rs.size(); i++) {
-                String med_name = rs.get(i).get("med_name");
-                String barcode = rs.get(i).get("barcode");
-                String strength = rs.get(i).get("dosage");
-                String quantity = rs.get(i).get("quantity");
-                String manufacturer = rs.get(i).get("pharma_company");
-
-                Object[] data = {med_name, barcode, strength, quantity, manufacturer};
-
-                tableModel.addRow(data);
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private DefaultTableModel buildTableModel() {
+        try {
+            ResultSet rs = this.dbManager.getMedication();
+            ResultSetMetaData metaData = rs.getMetaData();
+            String col[] = {"Manufacturer", "Prescription Name", "Strength (mg)", "Barcode", "Tablets/Pack"};
+
+            /* Gets names of columns */
+            Vector<String> columnNames = new Vector<String>();
+            int columnCount = metaData.getColumnCount();
+            for (int column = 0; column < columnCount; column++) {
+                columnNames.add(col[column]);
+            }
+
+            /* Gets data for the table */
+            Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+            while (rs.next()) {
+                Vector<Object> vector = new Vector<Object>();
+                for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+                    vector.add(rs.getObject(columnIndex));
+                }
+                data.add(vector);
+            }
+
+            return new DefaultTableModel(data, columnNames);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+        return null;
+    }
+
+
+    public static void main(String[] args) {
+        Dashboard dashboard = new Dashboard();
     }
 
     /**
@@ -159,7 +206,7 @@ public class Dashboard extends JFrame {
         panel2.add(spacer2, new com.intellij.uiDesigner.core.GridConstraints(4, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setFont(new Font("Impact", label1.getFont().getStyle(), 36));
-        label1.setForeground(new Color(-9567737));
+        label1.setForeground(new Color(-3597799));
         label1.setText("DASHBOARD");
         panel2.add(label1, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
         shortcutsButton = new JButton();
@@ -224,38 +271,4 @@ public class Dashboard extends JFrame {
     public JComponent $$$getRootComponent$$$() {
         return dashboard;
     }
-
-    //    private DefaultTableModel buildTableModel() {
-//        try {
-//            ResultSetMetaData metaData = this.rs.getMetaData();
-//
-//            /* Names of columns */
-//            Vector<String> columnNames = new Vector<String>();
-//            int columnCount = metaData.getColumnCount();
-//            String columnName = metaData.getColumnName(1);
-//            System.out.println(columnName);
-//            for (int column = 1; column <= columnCount; column++) {
-//                columnNames.add(metaData.getColumnName(column));
-//            }
-//
-//            /* Data for the table */
-//            Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-//            while (rs.next()) {
-//                Vector<Object> vector = new Vector<Object>();
-//                for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
-//                    vector.add(rs.getObject(columnIndex));
-//                }
-//                data.add(vector);
-//            }
-//
-//            return new DefaultTableModel(data, columnNames);
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.exit(0);
-//        }
-//        return null;
-//    }
-//
-
 }

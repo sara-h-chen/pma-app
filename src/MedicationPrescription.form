@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="MedicationPrescription">
-  <grid id="27dc6" binding="medProfilePanel" layout-manager="GridLayoutManager" row-count="16" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="medProfilePanel" layout-manager="GridLayoutManager" row-count="18" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="30" left="30" bottom="30" right="30"/>
     <constraints>
       <xy x="12" y="24" width="557" height="750"/>
     </constraints>
     <properties>
       <background color="-1118482"/>
-      <minimumSize width="450" height="600"/>
-      <preferredSize width="450" height="600"/>
+      <minimumSize width="450" height="650"/>
+      <preferredSize width="450" height="650"/>
     </properties>
     <border type="none"/>
     <children>
@@ -81,6 +81,7 @@
           </grid>
         </constraints>
         <properties>
+          <focusLostBehavior value="0"/>
           <horizontalAlignment value="0"/>
           <margin top="5" left="5" bottom="5" right="5"/>
           <text value="Barcode value"/>
@@ -95,7 +96,7 @@
         <properties>
           <horizontalAlignment value="0"/>
           <margin top="5" left="5" bottom="5" right="5"/>
-          <text value="Prescription strength"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="a431d" class="javax.swing.JFormattedTextField" binding="numberOfTablets">
@@ -186,6 +187,20 @@
       <vspacer id="3101c">
         <constraints>
           <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
+      <component id="3e69b" class="javax.swing.JButton" binding="cancelButton">
+        <constraints>
+          <grid row="17" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Cancel"/>
+          <toolTipText value="Close this window without making submitting any changes."/>
+        </properties>
+      </component>
+      <vspacer id="6138b">
+        <constraints>
+          <grid row="16" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
     </children>

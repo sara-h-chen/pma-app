@@ -15,7 +15,7 @@ import java.text.NumberFormat;
 /**
  * Created by sara on 10/02/17.
  */
-public class MedicationPrescription extends JFrame {
+public class MedicationPrescription extends JDialog {
     private JButton enterDetailsManuallyButton;
     private JLabel displaypiclabel;
     private JPanel medProfilePanel;
@@ -24,11 +24,15 @@ public class MedicationPrescription extends JFrame {
     private JFormattedTextField barcode;
     private JFormattedTextField prescriptionStrength;
     private JFormattedTextField numberOfTablets;
+    private JButton cancelButton;
     private MaskFormatter barcodeNumber;
+    private boolean updated;
+    private String[] toSend;
 
-    public MedicationPrescription() {
-        super("Add Prescription");
+    public MedicationPrescription(DatabaseManager dbManager) {
         $$$setupUI$$$();
+        this.updated = false;
+        this.toSend = new String[5];
         /* Set formatting of text field */
         try {
             /* Set formatted field for barcode number */
@@ -39,27 +43,86 @@ public class MedicationPrescription extends JFrame {
             /* Set formatted field for strength */
             NumberFormat f = DecimalFormat.getInstance();
             f.setMaximumFractionDigits(2);
-            f.setMinimumFractionDigits(2);
+            f.setMinimumFractionDigits(1);
             f.setRoundingMode(RoundingMode.HALF_UP);
             NumberFormatter df = new NumberFormatter(f);
             DefaultFormatterFactory doubleff = new DefaultFormatterFactory(df);
             prescriptionStrength.setFormatterFactory(doubleff);
+            prescriptionStrength.setValue(3.14);
+            /* Set formatted field for number of tablets */
+            NumberFormat d = NumberFormat.getIntegerInstance();
+            NumberFormatter intFormatter = new NumberFormatter(d);
+            DefaultFormatterFactory intff = new DefaultFormatterFactory(intFormatter);
+            numberOfTablets.setFormatterFactory(intff);
+            numberOfTablets.setValue(12);
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
         setContentPane(medProfilePanel);
         pack();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         setVisible(true);
+
+        /* Closes the window without taking action */
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MedicationPrescription.this.dispose();
+            }
+        });
+
+        /* Submits the data to the database */
         enterDetailsManuallyButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String value = prescriptionStrength.getText();
-                JOptionPane.showConfirmDialog(MedicationPrescription.this, value);
+                getValues();
+                if (toSend[1].length() < 13) {
+                    JOptionPane.showMessageDialog(MedicationPrescription.this, "Unable to add to profile: \nInvalid barcode value (not 13 digits)");
+                    return;
+                }
+                for (int i = 0; i < 5; i++) {
+                    try {
+                        /* Checks to see if the values entered are correct */
+                        if (toSend[i].equals("") || ((int) Double.parseDouble(toSend[i])) == 0) {
+                            JOptionPane.showMessageDialog(MedicationPrescription.this, "Profile not updated: \nPlease check that the values submitted are valid");
+                            return;
+                        }
+                    } catch (Exception parseError) {
+                        /* If values cannot be parsed by above, they are valid */
+                        continue;
+                    }
+                }
+                updated = true;
+                MedicationPrescription.this.dispose();
             }
         });
+    }
+
+    /**
+     * Updates the value to true when values are successfully submitted to the database
+     *
+     * @return
+     */
+    public boolean isUpdated() {
+        return updated;
+    }
+
+    /**
+     * Gets and validates the input
+     *
+     * @return
+     */
+    public String[] getValues() {
+        toSend[0] = prescriptionName.getText();
+        /* Strips all whitespace from mask to ensure the length is 13 digits */
+        toSend[1] = barcode.getText().replaceAll("\\s+", "");
+        toSend[2] = manufacturer.getText();
+        toSend[3] = prescriptionStrength.getText();
+        toSend[4] = numberOfTablets.getText();
+
+        return toSend;
     }
 
     private void createUIComponents() {
@@ -81,10 +144,10 @@ public class MedicationPrescription extends JFrame {
     private void $$$setupUI$$$() {
         createUIComponents();
         medProfilePanel = new JPanel();
-        medProfilePanel.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(16, 2, new Insets(30, 30, 30, 30), -1, -1));
+        medProfilePanel.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(18, 2, new Insets(30, 30, 30, 30), -1, -1));
         medProfilePanel.setBackground(new Color(-1118482));
-        medProfilePanel.setMinimumSize(new Dimension(450, 600));
-        medProfilePanel.setPreferredSize(new Dimension(450, 600));
+        medProfilePanel.setMinimumSize(new Dimension(450, 650));
+        medProfilePanel.setPreferredSize(new Dimension(450, 650));
         final JLabel label1 = new JLabel();
         label1.setText("Add a prescription to your profile");
         medProfilePanel.add(label1, new com.intellij.uiDesigner.core.GridConstraints(5, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -109,6 +172,7 @@ public class MedicationPrescription extends JFrame {
         manufacturer.setText("Name of manufacturer");
         medProfilePanel.add(manufacturer, new com.intellij.uiDesigner.core.GridConstraints(11, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         barcode = new JFormattedTextField();
+        barcode.setFocusLostBehavior(0);
         barcode.setHorizontalAlignment(0);
         barcode.setMargin(new Insets(5, 5, 5, 5));
         barcode.setText("Barcode value");
@@ -116,7 +180,7 @@ public class MedicationPrescription extends JFrame {
         prescriptionStrength = new JFormattedTextField();
         prescriptionStrength.setHorizontalAlignment(0);
         prescriptionStrength.setMargin(new Insets(5, 5, 5, 5));
-        prescriptionStrength.setText("Prescription strength");
+        prescriptionStrength.setText("");
         medProfilePanel.add(prescriptionStrength, new com.intellij.uiDesigner.core.GridConstraints(12, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         numberOfTablets = new JFormattedTextField();
         numberOfTablets.setHorizontalAlignment(0);
@@ -155,6 +219,12 @@ public class MedicationPrescription extends JFrame {
         medProfilePanel.add(label8, new com.intellij.uiDesigner.core.GridConstraints(7, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final com.intellij.uiDesigner.core.Spacer spacer6 = new com.intellij.uiDesigner.core.Spacer();
         medProfilePanel.add(spacer6, new com.intellij.uiDesigner.core.GridConstraints(8, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        cancelButton = new JButton();
+        cancelButton.setText("Cancel");
+        cancelButton.setToolTipText("Close this window without making submitting any changes.");
+        medProfilePanel.add(cancelButton, new com.intellij.uiDesigner.core.GridConstraints(17, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final com.intellij.uiDesigner.core.Spacer spacer7 = new com.intellij.uiDesigner.core.Spacer();
+        medProfilePanel.add(spacer7, new com.intellij.uiDesigner.core.GridConstraints(16, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**
