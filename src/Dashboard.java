@@ -28,7 +28,6 @@ public class Dashboard extends JFrame {
     private JPanel shortcutsPanel;
     private JSplitPane dashboardPane;
     private DatabaseManager dbManager;
-//    final private MedicationPrescription medForm;
 
     public Dashboard() {
         super("Dashboard");
@@ -54,6 +53,9 @@ public class Dashboard extends JFrame {
         setVisible(true);
         shortcutsPanel.setVisible(false);
 
+        /**
+         * Shows and hides the side nav bar/menu
+         */
         shortcutsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -66,17 +68,20 @@ public class Dashboard extends JFrame {
             }
         });
 
-        updateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addToDatabase();
-            }
-        });
-
         checkCompatibilityButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showConfirmDialog(Dashboard.this, "You keep clicking");
+            }
+        });
+
+        /**
+         * The next two functions update the user's medication profile
+         */
+        updateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addToDatabase();
             }
         });
 
@@ -90,7 +95,7 @@ public class Dashboard extends JFrame {
     }
 
     private void addToDatabase() {
-        final MedicationPrescription medForm = new MedicationPrescription(dbManager);
+        final MedicationPrescription medForm = new MedicationPrescription();
         medForm.addWindowListener(new WindowAdapter() {
             @Override
             public void windowDeactivated(WindowEvent e) {

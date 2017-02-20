@@ -29,7 +29,7 @@ public class MedicationPrescription extends JDialog {
     private boolean updated;
     private String[] toSend;
 
-    public MedicationPrescription(DatabaseManager dbManager) {
+    public MedicationPrescription() {
         $$$setupUI$$$();
         this.updated = false;
         this.toSend = new String[5];
@@ -164,18 +164,19 @@ public class MedicationPrescription extends JDialog {
         prescriptionName = new JTextField();
         prescriptionName.setHorizontalAlignment(0);
         prescriptionName.setMargin(new Insets(5, 5, 5, 5));
-        prescriptionName.setText("Name of prescription");
+        prescriptionName.setText("Prescription Name");
         medProfilePanel.add(prescriptionName, new com.intellij.uiDesigner.core.GridConstraints(9, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         manufacturer = new JTextField();
         manufacturer.setHorizontalAlignment(0);
         manufacturer.setMargin(new Insets(5, 5, 5, 5));
-        manufacturer.setText("Name of manufacturer");
+        manufacturer.setText("Manufacturer Name");
         medProfilePanel.add(manufacturer, new com.intellij.uiDesigner.core.GridConstraints(11, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         barcode = new JFormattedTextField();
         barcode.setFocusLostBehavior(0);
         barcode.setHorizontalAlignment(0);
         barcode.setMargin(new Insets(5, 5, 5, 5));
-        barcode.setText("Barcode value");
+        barcode.setText("13 digits");
+        barcode.setToolTipText("Only accepts numeric characters.");
         medProfilePanel.add(barcode, new com.intellij.uiDesigner.core.GridConstraints(10, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         prescriptionStrength = new JFormattedTextField();
         prescriptionStrength.setHorizontalAlignment(0);
@@ -208,6 +209,7 @@ public class MedicationPrescription extends JDialog {
         label7.setText("Tablets in packet");
         medProfilePanel.add(label7, new com.intellij.uiDesigner.core.GridConstraints(13, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         enterDetailsManuallyButton = new JButton();
+        enterDetailsManuallyButton.setMargin(new Insets(5, 14, 5, 14));
         enterDetailsManuallyButton.setText("Submit Details");
         enterDetailsManuallyButton.setToolTipText("Provide all the information on your prescriptions manually.");
         medProfilePanel.add(enterDetailsManuallyButton, new com.intellij.uiDesigner.core.GridConstraints(15, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
